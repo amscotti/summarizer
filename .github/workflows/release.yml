@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          [
+            x86_64-unknown-linux-gnu,
+            aarch64-unknown-linux-gnu,
+            x86_64-pc-windows-msvc,
+            x86_64-apple-darwin,
+            aarch64-apple-darwin,
+          ]
+
+    steps:
+      - name: "🧾 Checkout code"
+        uses: actions/checkout@v3
+
+      - name: "🦕 Setup Deno"
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.41.x
+
+      - name: "👷 Building project"
+        run: |
+          deno compile --allow-net --allow-env --target ${{ matrix.platform }} --output=summarizer-${{ matrix.platform }} src/cli.ts
+        shell: bash
+
+      - name: "📦 Upload release asset"
+        run: |
+          cd ${{ github.workspace }}
+          gh release upload ${{ github.event.release.tag_name }} summarizer-*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
