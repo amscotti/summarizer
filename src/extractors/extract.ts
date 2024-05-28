@@ -1,6 +1,6 @@
 import { HTMLExtractor } from "./HTMLExtractor.ts";
 import { YoutubeExtractor } from "./YoutubeExtractor.ts";
-import { TextExtractor } from "../utils/types.ts";
+import type { TextExtractor } from "../utils/types.ts";
 
 interface Extractor {
   test: (url: string) => boolean;

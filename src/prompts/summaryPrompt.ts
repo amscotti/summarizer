@@ -1,5 +1,5 @@
 import { SummarySize } from "../utils/types.ts";
-import { PromptTemplate } from "../../deps.ts";
+import { PromptTemplate } from "@langchain/core/prompts";
 
 const SUMMARY_TEMPLATE_LONG = `
 You are tasked with writing a comprehensive summary the following text so that readers will have a full understanding of the text, without need of referencing the source material.

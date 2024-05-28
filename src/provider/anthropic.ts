@@ -1,8 +1,11 @@
-import { ChatAnthropic } from "../../deps.ts";
+import { ChatAnthropic } from "@langchain/anthropic";
 import { AnthropicModel } from "../utils/types.ts";
 
 const encoder = new TextEncoder();
 
+/**
+ * Creates an instance of ChatAnthropic with specified model and settings.
+ */
 export function claude(modelName: AnthropicModel, streaming: boolean) {
   return new ChatAnthropic({
     modelName,
@@ -11,7 +14,7 @@ export function claude(modelName: AnthropicModel, streaming: boolean) {
     callbacks: [
       {
         async handleLLMNewToken(token: string) {
-          await Deno.stdout.write(encoder.encode(token));
+          await Bun.write(Bun.stdout, encoder.encode(token));
         },
       },
     ],

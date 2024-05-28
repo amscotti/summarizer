@@ -1,0 +1,24 @@
+{
+  "name": "summarizer",
+  "module": "src/cli.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@langchain/anthropic": "^0.1.21",
+    "@langchain/community": "^0.2.2",
+    "@langchain/core": "^0.2.0",
+    "@langchain/google-genai": "^0.0.16",
+    "@langchain/openai": "^0.0.33",
+    "@types/html-to-text": "^9.0.4",
+    "commander": "^12.1.0",
+    "html-to-text": "^9.0.5",
+    "youtube-transcript": "^1.2.1",
+    "youtubei": "^1.4.1",
+    "youtubei.js": "^9.4.0"
+  }
+}

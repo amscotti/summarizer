@@ -1,36 +1,115 @@
-import { Command, EnumType } from "../deps.ts";
-import { DEFAULT_MODEL, DEFAULT_SUMMARY_SIZE } from "./utils/constants.ts";
-import { AnthropicModel, SummarySize } from "./utils/types.ts";
+import { Command, CommanderError } from "commander";
+import {
+  DEFAULT_ANTHROPIC_MODEL,
+  DEFAULT_OPENAI_MODEL,
+  DEFAULT_GOOGLE_MODEL,
+  DEFAULT_SUMMARY_SIZE,
+} from "./utils/constants";
+import {
+  anthropicCall,
+  fromStdin,
+  fromURL,
+  openaiCall,
+  googleCall,
+} from "./main";
+import type {
+  AnthropicOptions,
+  OpenAIOptions,
+  GoogleOptions,
+  SummarySize,
+} from "./utils/types";
 
-import { fromStdin, fromURL } from "./main.ts";
+const isPipedInput = process.stdin.isTTY === undefined;
 
-const isPipedInput = !Deno.stdin.isTerminal();
+const convertToEnum = (values: string[]) => (value: string) => {
+  if (!values.includes(value)) {
+    throw new CommanderError(
+      1,
+      "commander.invalidArgument",
+      `Invalid value: ${value}`,
+    );
+  }
+  return value;
+};
 
-const AnthropicModelType = new EnumType(AnthropicModel);
-const SummarySizeType = new EnumType(SummarySize);
+class MyRootCommand extends Command {
+  createCommand(name: string) {
+    const cmd = new Command(name);
+    cmd
+      .description("Command line tool to summarize articles and other content")
+      .option(
+        "-s, --summary-size <size>",
+        "Desired size for summary",
+        DEFAULT_SUMMARY_SIZE,
+      )
+      .option("--no-streaming", "Disable streaming of summary");
+    return cmd;
+  }
+}
 
-const command = new Command()
-  .name("Summarizer")
-  .description("Command line tool to summarize articles and other content")
-  .type("AnthropicModel", AnthropicModelType)
-  .option("-m, --model-name <name:AnthropicModel>", "The Claude model name", {
-    default: DEFAULT_MODEL,
-  })
-  .type("SummarySize", SummarySizeType)
-  .option("-s, --summary-size <size:SummarySize>", "Desired size for summary", {
-    default: DEFAULT_SUMMARY_SIZE,
-  })
-  .option("--no-streaming", "Disable streaming of summary")
-  .arguments("[url:string]")
-  .action(async (options, url: string | undefined) => {
+const program = new MyRootCommand();
+
+program
+  .command("anthropic")
+  .arguments("[url]")
+  .option(
+    "-m, --model-name <name>",
+    "The Anthropic model name",
+    DEFAULT_ANTHROPIC_MODEL,
+  )
+  .description("Using Anthropic models")
+  .action(async (url: string | undefined, options: AnthropicOptions) => {
     if (url) {
-      await fromURL(options, url);
+      const text = await fromURL(url);
+      await anthropicCall(options, text);
     } else if (isPipedInput) {
-      await fromStdin(options);
+      await anthropicCall(options, await fromStdin());
     } else {
-      command.showHelp();
-      Deno.exit(1);
+      program.help();
+      process.exit(1);
     }
   });
 
-await command.parse(Deno.args);
+program
+  .command("openai")
+  .arguments("[url]")
+  .option(
+    "-m, --model-name <name>",
+    "The OpenAI model name",
+    DEFAULT_OPENAI_MODEL,
+  )
+  .description("Using OpenAI models")
+  .action(async (url: string | undefined, options: OpenAIOptions) => {
+    if (url) {
+      const text = await fromURL(url);
+      await openaiCall(options, text);
+    } else if (isPipedInput) {
+      await openaiCall(options, await fromStdin());
+    } else {
+      program.help();
+      process.exit(1);
+    }
+  });
+
+program
+  .command("google")
+  .arguments("[url]")
+  .option(
+    "-m, --model-name <name>",
+    "The Google model name",
+    DEFAULT_GOOGLE_MODEL,
+  )
+  .description("Using Google models")
+  .action(async (url: string | undefined, options: GoogleOptions) => {
+    if (url) {
+      const text = await fromURL(url);
+      await googleCall(options, text);
+    } else if (isPipedInput) {
+      await googleCall(options, await fromStdin());
+    } else {
+      program.help();
+      process.exit(1);
+    }
+  });
+
+program.parse(process.argv);

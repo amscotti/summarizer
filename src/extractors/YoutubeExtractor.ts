@@ -1,73 +1,28 @@
-import { Innertube, YoutubeTranscript } from "../../deps.ts";
-import { TextExtractor } from "../utils/types.ts";
-
-type VideoMetadata = {
-  title: string | undefined;
-  duration: number | undefined;
-  short_description: string | undefined;
-  author: string | undefined;
-  category: string | null;
-  published: string | undefined;
-};
+import { YoutubeLoader } from "@langchain/community/document_loaders/web/youtube";
+import type { TextExtractor } from "../utils/types";
 
 export class YoutubeExtractor implements TextExtractor {
-  private readonly videoId: string;
+  private readonly url: string;
 
   constructor(url: string) {
-    let videoId: string | null;
-    const urlObj = new URL(url);
-
-    if (urlObj.hostname === "youtu.be") {
-      videoId = urlObj.pathname.split("/")[1];
-    } else {
-      const urlParams = new URLSearchParams(urlObj.search);
-      videoId = urlParams.get("v");
-    }
-
-    if (!videoId) {
-      throw new Error("Invalid YouTube URL: Video ID not found.");
-    }
-
-    this.videoId = videoId;
+    this.url = url;
   }
 
-  private async getVideoMetadata(videoId: string): Promise<VideoMetadata> {
-    const youtube = await Innertube.create();
-    const video = await youtube.getInfo(videoId);
-
-    const { title, duration, short_description, author, category } =
-      video.basic_info;
-    const published = video.primary_info?.published?.text;
-
-    return { title, duration, short_description, author, category, published };
-  }
-
-  private async getVideoTranscript(videoId: string): Promise<string> {
-    const transcriptChunks = await YoutubeTranscript.fetchTranscript(videoId);
-    return transcriptChunks.reduce((acc, { text }) => `${acc} ${text}`, "");
-  }
-
-  private formatText(metadata: VideoMetadata, transcript: string): string {
+  private formatText(
+    metadata: Record<string, any>,
+    transcript: string,
+  ): string {
     const title = metadata.title || "Unknown title";
     const author = metadata.author || "Unknown author";
-    const published = metadata.published || "Unknown published date";
-    const category = metadata.category || "Unknown category";
-    const duration = metadata.duration !== undefined
-      ? `${metadata.duration} seconds`
-      : "Unknown duration";
-    const shortDescription = metadata.short_description ||
-      "Short description unavailable";
+    const description = metadata.description;
 
     return `
   ## Video Metadata:
   Title: ${title}
   Author: ${author}
-  Published: ${published}
-  Category: ${category}
-  Duration: ${duration}
 
-  ## Short Description:
-  ${shortDescription}
+  ## Description:
+  ${description}
 
   ## Transcript:
   ${transcript}
@@ -75,11 +30,14 @@ export class YoutubeExtractor implements TextExtractor {
   }
 
   public async extractText(): Promise<string> {
-    const [metadata, transcript] = await Promise.all([
-      this.getVideoMetadata(this.videoId),
-      this.getVideoTranscript(this.videoId),
-    ]);
+    const loader = YoutubeLoader.createFromUrl(this.url, {
+      language: "en",
+      addVideoInfo: true,
+    });
 
-    return this.formatText(metadata, transcript);
+    const docs = await loader.load();
+    const { pageContent: content, metadata } = docs[0];
+
+    return this.formatText(metadata, content);
   }
 }

@@ -1,7 +1,7 @@
-import { convert } from "../../deps.ts";
+import { convert } from "html-to-text";
 import { HEADERS } from "../utils/constants.ts";
 
-import { TextExtractor } from "../utils/types.ts";
+import type { TextExtractor } from "../utils/types.ts";
 
 export class HTMLExtractor implements TextExtractor {
   private readonly url: string;
@@ -12,7 +12,7 @@ export class HTMLExtractor implements TextExtractor {
 
   public async extractText(): Promise<string> {
     const html = await fetch(this.url, { headers: HEADERS }).then((res) =>
-      res.text()
+      res.text(),
     );
     return convert(html, { wordwrap: 130 });
   }
