@@ -6,7 +6,7 @@ const encoder = new TextEncoder();
 /**
  * Creates an instance of ChatOpenAI with the specified model name and streaming option.
  */
-export function gpt(modelName: OpenAIModel, streaming: boolean) {
+export function gpt(modelName: OpenAIModel, streaming: boolean): ChatOpenAI {
   return new ChatOpenAI({
     modelName,
     temperature: 0.5,

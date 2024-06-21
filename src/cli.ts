@@ -12,11 +12,16 @@ import {
   openaiCall,
   googleCall,
 } from "./main";
+import {
+  SummarySize,
+  OpenAIModel,
+  AnthropicModel,
+  GoogleModel,
+} from "./utils/types";
 import type {
   AnthropicOptions,
   OpenAIOptions,
   GoogleOptions,
-  SummarySize,
 } from "./utils/types";
 
 const isPipedInput = process.stdin.isTTY === undefined;
@@ -40,6 +45,11 @@ class MyRootCommand extends Command {
       .option(
         "-s, --summary-size <size>",
         "Desired size for summary",
+        convertToEnum([
+          SummarySize.Short,
+          SummarySize.Medium,
+          SummarySize.Long,
+        ]),
         DEFAULT_SUMMARY_SIZE,
       )
       .option("--no-streaming", "Disable streaming of summary");
@@ -55,6 +65,11 @@ program
   .option(
     "-m, --model-name <name>",
     "The Anthropic model name",
+    convertToEnum([
+      AnthropicModel.Haiku,
+      AnthropicModel.Sonnet,
+      AnthropicModel.Opus,
+    ]),
     DEFAULT_ANTHROPIC_MODEL,
   )
   .description("Using Anthropic models")
@@ -76,6 +91,11 @@ program
   .option(
     "-m, --model-name <name>",
     "The OpenAI model name",
+    convertToEnum([
+      OpenAIModel.gpt35turbo,
+      OpenAIModel.gpt4turbo,
+      OpenAIModel.gpt4o,
+    ]),
     DEFAULT_OPENAI_MODEL,
   )
   .description("Using OpenAI models")
@@ -97,6 +117,7 @@ program
   .option(
     "-m, --model-name <name>",
     "The Google model name",
+    convertToEnum([GoogleModel.gemini15flash, GoogleModel.gemini15pro]),
     DEFAULT_GOOGLE_MODEL,
   )
   .description("Using Google models")

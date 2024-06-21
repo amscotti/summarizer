@@ -6,7 +6,10 @@ const encoder = new TextEncoder();
 /**
  * Creates an instance of ChatAnthropic with specified model and settings.
  */
-export function claude(modelName: AnthropicModel, streaming: boolean) {
+export function claude(
+  modelName: AnthropicModel,
+  streaming: boolean,
+): ChatAnthropic {
   return new ChatAnthropic({
     modelName,
     temperature: 0.5,

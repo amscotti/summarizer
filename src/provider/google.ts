@@ -6,11 +6,20 @@ const encoder = new TextEncoder();
 /**
  * Creates an instance of ChatGoogleGenerativeAI with specified model and settings.
  */
-export function gemini(modelName: GoogleModel, streaming: boolean) {
+export function gemini(
+  modelName: GoogleModel,
+  streaming: boolean,
+): ChatGoogleGenerativeAI {
   return new ChatGoogleGenerativeAI({
     modelName,
     temperature: 0.5,
     streaming,
-    callbacks: [],
+    callbacks: [
+      {
+        async handleLLMNewToken(token: string) {
+          await Bun.write(Bun.stdout, encoder.encode(token));
+        },
+      },
+    ],
   });
 }

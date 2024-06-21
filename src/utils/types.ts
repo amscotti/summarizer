@@ -1,6 +1,6 @@
 export enum AnthropicModel {
   Opus = "claude-3-opus-20240229",
-  Sonnet = "claude-3-sonnet-20240229",
+  Sonnet = "claude-3-5-sonnet-20240620",
   Haiku = "claude-3-haiku-20240307",
 }
 
@@ -13,7 +13,6 @@ export enum OpenAIModel {
 export enum GoogleModel {
   gemini15pro = "gemini-1.5-pro",
   gemini15flash = "gemini-1.5-flash",
-  gemini10pro = "gemini-1.0-pro",
 }
 
 export enum SummarySize {
