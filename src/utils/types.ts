@@ -1,48 +1,51 @@
-export enum AnthropicModel {
-  Opus = "claude-3-opus-20240229",
-  Sonnet = "claude-3-5-sonnet-20240620",
-  Haiku = "claude-3-haiku-20240307",
-}
+export const AnthropicModel = {
+  Opus: "claude-3-opus-latest",
+  Sonnet: "claude-3-7-sonnet-latest",
+  Haiku: "claude-3-5-haiku-latest",
+} as const;
 
-export enum OpenAIModel {
-  gpt4o = "gpt-4o",
-  gpt4turbo = "gpt-4-turbo",
-  gpt35turbo = "gpt-3.5-turbo",
-}
+export const OpenAIModel = {
+  gpt45preview: "gpt-4.5-preview",
+  o3mini: "o3-mini",
+  gpt4o: "gpt-4o",
+  gp4omini: "gpt-4o-mini",
+} as const;
 
-export enum GoogleModel {
-  gemini15pro = "gemini-1.5-pro",
-  gemini15flash = "gemini-1.5-flash",
-}
+export const GoogleModel = {
+  pro: "gemini-2.0-pro-exp-02-05",
+  flash: "gemini-2.0-flash",
+} as const;
 
-export enum SummarySize {
-  Short = "short",
-  Medium = "medium",
-  Long = "long",
-}
+export const SummarySize = {
+  Short: "short",
+  Medium: "medium",
+  Long: "long",
+} as const;
 
 export interface TextExtractor {
   extractText(): Promise<string>;
 }
 
+export type AnthropicModelType =
+  (typeof AnthropicModel)[keyof typeof AnthropicModel];
+export type OpenAIModelType = (typeof OpenAIModel)[keyof typeof OpenAIModel];
+export type GoogleModelType = (typeof GoogleModel)[keyof typeof GoogleModel];
+export type SummarySizeType = (typeof SummarySize)[keyof typeof SummarySize];
+
 export type AnthropicOptions = {
-  modelName: AnthropicModel;
-  summarySize: SummarySize;
+  modelName: AnthropicModelType;
+  summarySize: SummarySizeType;
   streaming: boolean;
 };
 
 export type OpenAIOptions = {
-  modelName: OpenAIModel;
-  summarySize: SummarySize;
+  modelName: OpenAIModelType;
+  summarySize: SummarySizeType;
   streaming: boolean;
 };
 
 export type GoogleOptions = {
-  modelName: GoogleModel;
-  summarySize: SummarySize;
+  modelName: GoogleModelType;
+  summarySize: SummarySizeType;
   streaming: boolean;
 };
-
-export interface TextExtractor {
-  extractText(): Promise<string>;
-}

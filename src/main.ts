@@ -1,13 +1,36 @@
+import type { AIMessage } from "@langchain/core/messages";
+import type { StringPromptValueInterface } from "@langchain/core/prompt_values";
+import type { RunnableLike } from "@langchain/core/runnables";
 import { getExtractor } from "./extractors/extract.ts";
+import { getPrompt } from "./prompts/summaryPrompt.ts";
+import { claude } from "./provider/anthropic.ts";
+import { gemini } from "./provider/google.ts";
+import { gpt } from "./provider/openai.ts";
 import type {
   AnthropicOptions,
-  OpenAIOptions,
   GoogleOptions,
+  OpenAIOptions,
 } from "./utils/types.ts";
-import { claude } from "./provider/anthropic.ts";
-import { gpt } from "./provider/openai.ts";
-import { gemini } from "./provider/google.ts";
-import { getPrompt } from "./prompts/summaryPrompt.ts";
+
+// Suppress or override tiktoken-related console warnings
+// This overrides console.warn to filter out the specific tiktoken error messages
+const originalWarn = console.warn;
+console.warn = function filteredWarn(...args) {
+  // Skip tiktoken-related warnings
+  if (
+    args.length > 0 &&
+    typeof args[0] === "string" &&
+    (args[0].includes("Failed to calculate number of tokens") ||
+      args[0].includes("tiktoken") ||
+      args[0].includes("Unknown model"))
+  ) {
+    // Silently ignore these warnings
+    return;
+  }
+
+  // Pass through all other warnings
+  originalWarn.apply(console, args);
+};
 
 export async function fromURL(url: string): Promise<string> {
   const extractor = getExtractor(url);
@@ -28,10 +51,13 @@ export async function anthropicCall(
   }
 
   const llmChain = getPrompt(options.summarySize).pipe(
-    claude(options.modelName, options.streaming),
+    claude(options.modelName, options.streaming) as RunnableLike<
+      StringPromptValueInterface,
+      AIMessage
+    >,
   );
 
-  const results = await llmChain.invoke({ text });
+  const results: AIMessage = await llmChain.invoke({ text });
   if (!options.streaming) {
     await Bun.write(
       Bun.stdout,
@@ -52,10 +78,13 @@ export async function openaiCall(
   }
 
   const llmChain = getPrompt(options.summarySize).pipe(
-    gpt(options.modelName, options.streaming),
+    gpt(options.modelName, options.streaming) as RunnableLike<
+      StringPromptValueInterface,
+      AIMessage
+    >,
   );
 
-  const results = await llmChain.invoke({ text });
+  const results: AIMessage = await llmChain.invoke({ text });
   if (!options.streaming) {
     await Bun.write(
       Bun.stdout,
@@ -75,20 +104,13 @@ export async function googleCall(
     process.exit(1);
   }
 
-  // Disable streaming for Google
-  options.streaming = false;
-
   const llmChain = getPrompt(options.summarySize).pipe(
-    gemini(options.modelName, options.streaming),
+    gemini(options.modelName, options.streaming) as RunnableLike<
+      StringPromptValueInterface,
+      AIMessage
+    >,
   );
 
-  const results = await llmChain.invoke({ text });
-  if (!options.streaming) {
-    await Bun.write(
-      Bun.stdout,
-      new TextEncoder().encode(results.content.toString()),
-    );
-  }
-
+  await llmChain.invoke({ text });
   process.exit(0);
 }

@@ -1,13 +1,13 @@
 import {
   AnthropicModel,
-  OpenAIModel,
   GoogleModel,
+  OpenAIModel,
   SummarySize,
 } from "./types.ts";
 
 export const DEFAULT_ANTHROPIC_MODEL = AnthropicModel.Sonnet;
-export const DEFAULT_OPENAI_MODEL = OpenAIModel.gpt4o;
-export const DEFAULT_GOOGLE_MODEL = GoogleModel.gemini15flash;
+export const DEFAULT_OPENAI_MODEL = OpenAIModel.o3mini;
+export const DEFAULT_GOOGLE_MODEL = GoogleModel.flash;
 export const DEFAULT_SUMMARY_SIZE = SummarySize.Long;
 
 export const HEADERS = new Headers({
