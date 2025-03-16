@@ -2,23 +2,30 @@
   "name": "summarizer",
   "module": "src/cli.ts",
   "type": "module",
+  "scripts": {
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "check": "biome check --write ."
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "latest",
+    "@types/html-to-text": "^9.0.4"
   },
   "peerDependencies": {
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@langchain/anthropic": "^0.1.21",
-    "@langchain/community": "^0.2.12",
-    "@langchain/core": "^0.2.8",
-    "@langchain/google-genai": "^0.0.20",
-    "@langchain/openai": "^0.0.33",
-    "@types/html-to-text": "^9.0.4",
-    "commander": "^12.1.0",
+    "@cyber2024/pdf-parse-fixed": "^1.2.5",
+    "@langchain/anthropic": "^0.3.15",
+    "@langchain/community": "^0.3.35",
+    "@langchain/core": "^0.3.42",
+    "@langchain/google-genai": "^0.1.11",
+    "@langchain/openai": "^0.4.4",
+    "commander": "^13.1.0",
     "html-to-text": "^9.0.5",
     "youtube-transcript": "^1.2.1",
-    "youtubei": "^1.4.4",
-    "youtubei.js": "^9.4.0"
+    "youtubei": "^1.6.7",
+    "youtubei.js": "^13.1.0"
   }
 }

@@ -1,5 +1,5 @@
-import { SummarySize } from "../utils/types.ts";
 import { PromptTemplate } from "@langchain/core/prompts";
+import { SummarySize } from "../utils/types.ts";
 
 const SUMMARY_TEMPLATE_LONG = `
 You are tasked with writing a comprehensive summary the following text so that readers will have a full understanding of the text, without need of referencing the source material.
@@ -58,7 +58,7 @@ const SUMMARY_SIZE_TO_PROMPT = {
   [SummarySize.Long]: SUMMARY_TEMPLATE_LONG,
   [SummarySize.Medium]: SUMMARY_TEMPLATE_MEDIUM,
   [SummarySize.Short]: SUMMARY_TEMPLATE_SHORT,
-};
+} as const;
 
 /**
  * Retrieves a PromptTemplate based on the specified summary size.
@@ -66,9 +66,10 @@ const SUMMARY_SIZE_TO_PROMPT = {
  * @param size - The size of the summary to be generated, which can be Long, Medium, or Short.
  * @returns A PromptTemplate instance initialized with the template corresponding to the given summary size and the required input variables.
  */
-export function getPrompt(size: SummarySize) {
+export function getPrompt(size: string) {
   return new PromptTemplate<{ text: string }>({
-    template: SUMMARY_SIZE_TO_PROMPT[size],
+    template:
+      SUMMARY_SIZE_TO_PROMPT[size as keyof typeof SUMMARY_SIZE_TO_PROMPT],
     inputVariables: ["text"],
   });
 }

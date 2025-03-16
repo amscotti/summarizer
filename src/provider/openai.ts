@@ -1,15 +1,14 @@
 import { ChatOpenAI } from "@langchain/openai";
-import { OpenAIModel } from "../utils/types.ts";
+import type { OpenAIModelType } from "../utils/types.ts";
 
 const encoder = new TextEncoder();
 
 /**
  * Creates an instance of ChatOpenAI with the specified model name and streaming option.
  */
-export function gpt(modelName: OpenAIModel, streaming: boolean): ChatOpenAI {
+export function gpt(model: OpenAIModelType, streaming: boolean): ChatOpenAI {
   return new ChatOpenAI({
-    modelName,
-    temperature: 0.5,
+    model,
     streaming,
     callbacks: [
       {

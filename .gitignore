@@ -2,3 +2,4 @@ summarizer
 .zed
 reports
 node_modules
+.env

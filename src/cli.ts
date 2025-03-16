@@ -1,32 +1,32 @@
 import { Command, CommanderError } from "commander";
 import {
-  DEFAULT_ANTHROPIC_MODEL,
-  DEFAULT_OPENAI_MODEL,
-  DEFAULT_GOOGLE_MODEL,
-  DEFAULT_SUMMARY_SIZE,
-} from "./utils/constants";
-import {
   anthropicCall,
   fromStdin,
   fromURL,
-  openaiCall,
   googleCall,
+  openaiCall,
 } from "./main";
 import {
-  SummarySize,
-  OpenAIModel,
+  DEFAULT_ANTHROPIC_MODEL,
+  DEFAULT_GOOGLE_MODEL,
+  DEFAULT_OPENAI_MODEL,
+  DEFAULT_SUMMARY_SIZE,
+} from "./utils/constants";
+import {
   AnthropicModel,
   GoogleModel,
+  OpenAIModel,
+  SummarySize,
 } from "./utils/types";
 import type {
   AnthropicOptions,
-  OpenAIOptions,
   GoogleOptions,
+  OpenAIOptions,
 } from "./utils/types";
 
 const isPipedInput = process.stdin.isTTY === undefined;
 
-const convertToEnum = (values: string[]) => (value: string) => {
+const validateValue = (values: readonly string[]) => (value: string) => {
   if (!values.includes(value)) {
     throw new CommanderError(
       1,
@@ -45,11 +45,7 @@ class MyRootCommand extends Command {
       .option(
         "-s, --summary-size <size>",
         "Desired size for summary",
-        convertToEnum([
-          SummarySize.Short,
-          SummarySize.Medium,
-          SummarySize.Long,
-        ]),
+        validateValue(Object.values(SummarySize)),
         DEFAULT_SUMMARY_SIZE,
       )
       .option("--no-streaming", "Disable streaming of summary");
@@ -65,11 +61,7 @@ program
   .option(
     "-m, --model-name <name>",
     "The Anthropic model name",
-    convertToEnum([
-      AnthropicModel.Haiku,
-      AnthropicModel.Sonnet,
-      AnthropicModel.Opus,
-    ]),
+    validateValue(Object.values(AnthropicModel)),
     DEFAULT_ANTHROPIC_MODEL,
   )
   .description("Using Anthropic models")
@@ -91,11 +83,7 @@ program
   .option(
     "-m, --model-name <name>",
     "The OpenAI model name",
-    convertToEnum([
-      OpenAIModel.gpt35turbo,
-      OpenAIModel.gpt4turbo,
-      OpenAIModel.gpt4o,
-    ]),
+    validateValue(Object.values(OpenAIModel)),
     DEFAULT_OPENAI_MODEL,
   )
   .description("Using OpenAI models")
@@ -117,7 +105,7 @@ program
   .option(
     "-m, --model-name <name>",
     "The Google model name",
-    convertToEnum([GoogleModel.gemini15flash, GoogleModel.gemini15pro]),
+    validateValue(Object.values(GoogleModel)),
     DEFAULT_GOOGLE_MODEL,
   )
   .description("Using Google models")

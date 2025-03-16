@@ -22,7 +22,7 @@ NOTE: with the latest features that have been added compiling to an executable s
 
 ## TODO
 
-- [ ] Add logic for summarizing PDF urls
+- [X] Add logic for summarizing PDF urls
 - [ ] Create Docker image
 
 ## Features

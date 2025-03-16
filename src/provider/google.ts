@@ -1,5 +1,5 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { GoogleModel } from "../utils/types.ts";
+import type { GoogleModelType } from "../utils/types.ts";
 
 const encoder = new TextEncoder();
 
@@ -7,11 +7,11 @@ const encoder = new TextEncoder();
  * Creates an instance of ChatGoogleGenerativeAI with specified model and settings.
  */
 export function gemini(
-  modelName: GoogleModel,
+  model: GoogleModelType,
   streaming: boolean,
 ): ChatGoogleGenerativeAI {
   return new ChatGoogleGenerativeAI({
-    modelName,
+    model,
     temperature: 0.5,
     streaming,
     callbacks: [

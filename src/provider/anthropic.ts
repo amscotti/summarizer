@@ -1,5 +1,5 @@
 import { ChatAnthropic } from "@langchain/anthropic";
-import { AnthropicModel } from "../utils/types.ts";
+import type { AnthropicModelType } from "../utils/types.ts";
 
 const encoder = new TextEncoder();
 
@@ -7,11 +7,11 @@ const encoder = new TextEncoder();
  * Creates an instance of ChatAnthropic with specified model and settings.
  */
 export function claude(
-  modelName: AnthropicModel,
+  model: AnthropicModelType,
   streaming: boolean,
 ): ChatAnthropic {
   return new ChatAnthropic({
-    modelName,
+    model,
     temperature: 0.5,
     streaming,
     callbacks: [
