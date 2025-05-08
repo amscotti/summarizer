@@ -55,9 +55,9 @@ SUMMARY:
 `;
 
 const SUMMARY_SIZE_TO_PROMPT = {
-  [SummarySize.Long]: SUMMARY_TEMPLATE_LONG,
-  [SummarySize.Medium]: SUMMARY_TEMPLATE_MEDIUM,
-  [SummarySize.Short]: SUMMARY_TEMPLATE_SHORT,
+  [SummarySize.long]: SUMMARY_TEMPLATE_LONG,
+  [SummarySize.medium]: SUMMARY_TEMPLATE_MEDIUM,
+  [SummarySize.short]: SUMMARY_TEMPLATE_SHORT,
 } as const;
 
 /**

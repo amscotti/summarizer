@@ -5,21 +5,23 @@ export const AnthropicModel = {
 } as const;
 
 export const OpenAIModel = {
-  gpt45preview: "gpt-4.5-preview",
-  o3mini: "o3-mini",
+  gpt41: "gpt-4.1",
+  gpt41mini: "gpt-4.1-mini",
+  gpt41nano: "gpt-4.1-nano",
   gpt4o: "gpt-4o",
-  gp4omini: "gpt-4o-mini",
+  o3: "o3",
+  o4mini: "o4-mini",
 } as const;
 
 export const GoogleModel = {
-  pro: "gemini-2.0-pro-exp-02-05",
-  flash: "gemini-2.0-flash",
+  pro: "gemini-2.5-pro-preview-05-06",
+  flash: "gemini-2.5-flash-preview-04-17",
 } as const;
 
 export const SummarySize = {
-  Short: "short",
-  Medium: "medium",
-  Long: "long",
+  short: "short",
+  medium: "medium",
+  long: "long",
 } as const;
 
 export interface TextExtractor {
