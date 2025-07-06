@@ -11,6 +11,11 @@ import type {
   GoogleOptions,
   OpenAIOptions,
 } from "./utils/types.ts";
+import {
+  mapAnthropicModel,
+  mapGoogleModel,
+  mapOpenAIModel,
+} from "./utils/types.ts";
 
 // Suppress or override tiktoken-related console warnings
 // This overrides console.warn to filter out the specific tiktoken error messages
@@ -51,10 +56,10 @@ export async function anthropicCall(
   }
 
   const llmChain = getPrompt(options.summarySize).pipe(
-    claude(options.modelName, options.streaming) as RunnableLike<
-      StringPromptValueInterface,
-      AIMessage
-    >,
+    claude(
+      mapAnthropicModel(options.modelName),
+      options.streaming,
+    ) as RunnableLike<StringPromptValueInterface, AIMessage>,
   );
 
   const results: AIMessage = await llmChain.invoke({ text });
@@ -78,7 +83,7 @@ export async function openaiCall(
   }
 
   const llmChain = getPrompt(options.summarySize).pipe(
-    gpt(options.modelName, options.streaming) as RunnableLike<
+    gpt(mapOpenAIModel(options.modelName), options.streaming) as RunnableLike<
       StringPromptValueInterface,
       AIMessage
     >,
@@ -105,10 +110,10 @@ export async function googleCall(
   }
 
   const llmChain = getPrompt(options.summarySize).pipe(
-    gemini(options.modelName, options.streaming) as RunnableLike<
-      StringPromptValueInterface,
-      AIMessage
-    >,
+    gemini(
+      mapGoogleModel(options.modelName),
+      options.streaming,
+    ) as RunnableLike<StringPromptValueInterface, AIMessage>,
   );
 
   await llmChain.invoke({ text });

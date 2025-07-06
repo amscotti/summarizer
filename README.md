@@ -28,6 +28,8 @@ NOTE: with the latest features that have been added compiling to an executable s
 ## Features
 
 - Summarize articles and content from provided URLs
+- Summarize PDFs from URLs
+- Summarize YouTube videos using transcripts
 - Summarize text piped directly into the app
 - Adjust the summary size (short, medium, or long) to fit your needs
 - Choose from different models from different providers for summarization
@@ -72,12 +74,25 @@ To use the Summarizer, you have two options:
 
 ### Options
 
-- `-m, --model-name <name>`: Specify the Claude model to use for summarization.
+- `-m, --model-name <name>`: Specify the model to use for summarization.
   Available options are:
 
-  - `claude-3-opus-20240229` (default)
-  - `claude-3-sonnet-20240229`
-  - `claude-3-haiku-20240307`
+  **Anthropic:**
+  - `opus` (Claude Opus 4)
+  - `sonnet` (Claude Sonnet 4) - default
+  - `haiku` (Claude 3.5 Haiku)
+
+  **OpenAI:**
+  - `gpt41` (GPT-4.1) - default
+  - `gpt41mini` (GPT-4.1 Mini)
+  - `gpt41nano` (GPT-4.1 Nano)
+  - `gpt4o` (GPT-4o)
+  - `o3` (o3)
+  - `o4mini` (o4 Mini)
+
+  **Google:**
+  - `pro` (Gemini 2.5 Pro) - default
+  - `flash` (Gemini 2.5 Flash)
 
 - `-s, --summary-size <size>`: Specify the desired size of the summary.
   Available options are:
@@ -99,7 +114,7 @@ bun run src/cli.ts anthropic "https://example.com/article"
 Summarize piped text using a specific model and summary size:
 
 ```shell
-cat article.txt | bun run src/cli.ts -s medium anthropic -m claude-3-haiku-20240307
+cat article.txt | bun run src/cli.ts anthropic -s medium -m haiku
 ```
 
 ## Compiling

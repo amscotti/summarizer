@@ -17,15 +17,15 @@
   },
   "dependencies": {
     "@cyber2024/pdf-parse-fixed": "^1.2.5",
-    "@langchain/anthropic": "^0.3.20",
-    "@langchain/community": "^0.3.42",
-    "@langchain/core": "^0.3.55",
+    "@langchain/anthropic": "^0.3.25",
+    "@langchain/community": "^0.3.49",
+    "@langchain/core": "^0.3.66",
     "@langchain/google-genai": "^0.1.12",
     "@langchain/openai": "^0.4.9",
     "commander": "^13.1.0",
     "html-to-text": "^9.0.5",
     "youtube-transcript": "^1.2.1",
-    "youtubei": "^1.6.7",
+    "youtubei": "^1.7.0",
     "youtubei.js": "^13.4.0"
   }
 }

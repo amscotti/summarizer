@@ -6,14 +6,12 @@ import {
   googleCall,
   openaiCall,
 } from "./main";
-import {
-  DEFAULT_ANTHROPIC_MODEL,
-  DEFAULT_GOOGLE_MODEL,
-  DEFAULT_OPENAI_MODEL,
-  DEFAULT_SUMMARY_SIZE,
-} from "./utils/constants";
+import { DEFAULT_SUMMARY_SIZE } from "./utils/constants";
 import {
   AnthropicModel,
+  DEFAULT_ANTHROPIC_MODEL_KEY,
+  DEFAULT_GOOGLE_MODEL_KEY,
+  DEFAULT_OPENAI_MODEL_KEY,
   GoogleModel,
   OpenAIModel,
   SummarySize,
@@ -61,8 +59,8 @@ program
   .option(
     "-m, --model-name <name>",
     "The Anthropic model name",
-    validateValue(Object.values(AnthropicModel)),
-    DEFAULT_ANTHROPIC_MODEL,
+    validateValue(Object.keys(AnthropicModel)),
+    DEFAULT_ANTHROPIC_MODEL_KEY,
   )
   .description("Using Anthropic models")
   .action(async (url: string | undefined, options: AnthropicOptions) => {
@@ -83,8 +81,8 @@ program
   .option(
     "-m, --model-name <name>",
     "The OpenAI model name",
-    validateValue(Object.values(OpenAIModel)),
-    DEFAULT_OPENAI_MODEL,
+    validateValue(Object.keys(OpenAIModel)),
+    DEFAULT_OPENAI_MODEL_KEY,
   )
   .description("Using OpenAI models")
   .action(async (url: string | undefined, options: OpenAIOptions) => {
@@ -105,8 +103,8 @@ program
   .option(
     "-m, --model-name <name>",
     "The Google model name",
-    validateValue(Object.values(GoogleModel)),
-    DEFAULT_GOOGLE_MODEL,
+    validateValue(Object.keys(GoogleModel)),
+    DEFAULT_GOOGLE_MODEL_KEY,
   )
   .description("Using Google models")
   .action(async (url: string | undefined, options: GoogleOptions) => {
