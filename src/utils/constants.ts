@@ -5,7 +5,7 @@ import {
   SummarySize,
 } from "./types.ts";
 
-export const DEFAULT_ANTHROPIC_MODEL = AnthropicModel.Sonnet;
+export const DEFAULT_ANTHROPIC_MODEL = AnthropicModel.sonnet;
 export const DEFAULT_OPENAI_MODEL = OpenAIModel.gpt41mini;
 export const DEFAULT_GOOGLE_MODEL = GoogleModel.flash;
 export const DEFAULT_SUMMARY_SIZE = SummarySize.long;
