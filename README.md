@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="images/wizard_riding.jpg" alt="A wizard riding a dinosaur - Leonardo AI" width="500">
+    <img src="images/wizard_summarizing.png" alt="A wizard summarizing knowledge" width="500">
 </p>
 
 Summarizer is a command-line tool that generates comprehensive summaries of articles and other text-based content. It utilizes the powerful language models from Anthropic, Google, or OpenAI to create concise and informative summaries, helping users quickly grasp the key points of lengthy texts.
@@ -8,22 +8,13 @@ Summarizer is a command-line tool that generates comprehensive summaries of arti
 
 ## Motivation
 
-This is a port of a
-[python application](https://github.com/amscotti/page-summarizer) to Bun, this
-is to better learn and understand developing with [Bun](https://bun.sh/) but
-also to take advantage of Bun's ability to [compile](https://bun.sh/docs/bundler/executables) to an executable,
-with the ability to
-[cross compile](https://bun.sh/docs/bundler/executables#cross-compile-to-other-platforms) to other platforms. This should make it easier for others to use this
-application and more convenient than a Python. Currently, this application is
-not full featured like the Python version, but does have some additional
-functionality.
-
-NOTE: with the latest features that have been added compiling to an executable seems to no longer work properly, I will test with later versions of Bun.
+This is a port of a [Python application](https://github.com/amscotti/page-summarizer) to Bun. The goals are to learn developing with [Bun](https://bun.sh/) and to leverage Bun’s ability to [compile](https://bun.sh/docs/bundler/executables) to a single executable, with support for [cross‑compilation](https://bun.sh/docs/bundler/executables#cross-compile-to-other-platforms). This should make it easier for others to use, and more convenient than a Python script. Currently, this application is not as full‑featured as the Python version, but it has some additional functionality.
+Note: local compilation may vary by platform. The provided Dockerfile reliably builds a Linux (musl) executable in a multi‑stage Alpine image.
 
 ## TODO
 
-- [X] Add logic for summarizing PDF urls
-- [ ] Create Docker image
+- [X] Add logic for summarizing PDF URLs
+- [X] Create Docker image
 
 ## Features
 
@@ -37,18 +28,17 @@ NOTE: with the latest features that have been added compiling to an executable s
 
 ## Installation
 
-1. Ensure you have Bun installed on your system. If not, you can install it
-   from the official Bun website: [https://bun.sh/](https://bun.sh/)
+1. Ensure you have Bun installed on your system. If not, you can install it from the official Bun website: [https://bun.sh/](https://bun.sh/)
 
 2. Clone this repository to your local machine:
 
-   ```shell
+   ```bash
    git clone https://github.com/amscotti/summarizer.git
    ```
 
 3. Navigate to the project directory:
 
-   ```shell
+   ```bash
    cd summarizer
    ```
 
@@ -63,14 +53,16 @@ To use the Summarizer, you have two options:
 
 1. Provide a URL as a command-line argument:
 
-   ```shell
+   ```bash
    bun run src/cli.ts google "https://example.com/article"
    ```
 
 2. Pipe text directly into the app:
-   ```shell
+   ```bash
    cat article.txt | bun run src/cli.ts google
    ```
+
+If you compiled the binary or use the Docker image, replace `bun run src/cli.ts` with `summarizer` (or just pass args after the Docker image since it uses `summarizer` as ENTRYPOINT).
 
 ### Options
 
@@ -78,17 +70,14 @@ To use the Summarizer, you have two options:
   Available options are:
 
   **Anthropic:**
-  - `opus` (Claude Opus 4)
+  - `opus` (Claude Opus 4.1)
   - `sonnet` (Claude Sonnet 4) - default
   - `haiku` (Claude 3.5 Haiku)
 
   **OpenAI:**
-  - `gpt41` (GPT-4.1) - default
-  - `gpt41mini` (GPT-4.1 Mini)
-  - `gpt41nano` (GPT-4.1 Nano)
-  - `gpt4o` (GPT-4o)
-  - `o3` (o3)
-  - `o4mini` (o4 Mini)
+  - `gpt5` (GPT-5)
+  - `gpt5mini` (GPT-5 Mini) - default
+  - `gpt5nano` (GPT-5 Nano)
 
   **Google:**
   - `pro` (Gemini 2.5 Pro) - default
@@ -107,13 +96,13 @@ To use the Summarizer, you have two options:
 
 Summarize an article from a URL using the default model and summary size:
 
-```shell
+```bash
 bun run src/cli.ts anthropic "https://example.com/article"
 ```
 
 Summarize piped text using a specific model and summary size:
 
-```shell
+```bash
 cat article.txt | bun run src/cli.ts anthropic -s medium -m haiku
 ```
 
@@ -121,9 +110,57 @@ cat article.txt | bun run src/cli.ts anthropic -s medium -m haiku
 
 You can compile this application into an executable using the following command,
 
-```shell
+```bash
 bun build src/cli.ts --compile --outfile summarizer
 ```
+
+## Docker
+
+Build the image (Alpine, multi-stage with Bun compile):
+
+```bash
+docker build -t summarizer .
+```
+
+Run with environment variables already set in your shell (passed through):
+
+- OpenAI
+
+```bash
+docker run --rm --env OPENAI_API_KEY summarizer openai "https://example.com/article"
+```
+
+- Anthropic (uses Claude Opus 4.1 when `-m opus`)
+
+```bash
+docker run --rm --env ANTHROPIC_API_KEY summarizer anthropic -m opus "https://example.com/article"
+```
+
+- Google
+
+```bash
+docker run --rm --env GOOGLE_API_KEY summarizer google "https://example.com/article"
+```
+
+Pipe from stdin:
+
+```bash
+echo "Some long text..." | docker run --rm -i --env OPENAI_API_KEY summarizer openai -s short
+```
+
+Use a .env file instead of passing individual vars:
+
+```bash
+docker run --rm --env-file .env summarizer openai "https://example.com/article"
+```
+
+Notes
+- ENTRYPOINT is `summarizer`, so pass a provider subcommand (openai|anthropic|google) and any flags.
+- Required env vars by provider:
+  - OpenAI: `OPENAI_API_KEY`
+  - Anthropic: `ANTHROPIC_API_KEY`
+  - Google: `GOOGLE_API_KEY`
+- Defaults: OpenAI uses GPT‑5 Mini; Anthropic `opus` maps to Claude Opus 4.1.
 
 ## Contributing
 

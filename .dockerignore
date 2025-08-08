@@ -1,0 +1,16 @@
+# Exclude VCS and local artifacts
+.git
+.github
+.vscode
+
+# Node/bun artifacts
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Tests and sample data (not needed for build)
+test
+
+# OS junk
+.DS_Store
