@@ -1,16 +1,13 @@
 export const AnthropicModel = {
-  opus: "claude-opus-4-20250514",
+  opus: "claude-opus-4-1-20250805",
   sonnet: "claude-sonnet-4-20250514",
   haiku: "claude-3-5-haiku-latest",
 } as const;
 
 export const OpenAIModel = {
-  gpt41: "gpt-4.1",
-  gpt41mini: "gpt-4.1-mini",
-  gpt41nano: "gpt-4.1-nano",
-  gpt4o: "gpt-4o",
-  o3: "o3",
-  o4mini: "o4-mini",
+  gpt5: "gpt-5",
+  gpt5mini: "gpt-5-mini",
+  gpt5nano: "gpt-5-nano",
 } as const;
 
 export const GoogleModel = {
@@ -39,7 +36,7 @@ export type OpenAIModelKey = keyof typeof OpenAIModel;
 export type GoogleModelKey = keyof typeof GoogleModel;
 
 export const DEFAULT_ANTHROPIC_MODEL_KEY: AnthropicModelKey = "sonnet";
-export const DEFAULT_OPENAI_MODEL_KEY: OpenAIModelKey = "gpt41";
+export const DEFAULT_OPENAI_MODEL_KEY: OpenAIModelKey = "gpt5mini";
 export const DEFAULT_GOOGLE_MODEL_KEY: GoogleModelKey = "pro";
 
 export function mapAnthropicModel(key: AnthropicModelKey): AnthropicModelType {

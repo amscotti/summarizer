@@ -17,9 +17,9 @@
   },
   "dependencies": {
     "@cyber2024/pdf-parse-fixed": "^1.2.5",
-    "@langchain/anthropic": "^0.3.25",
-    "@langchain/community": "^0.3.49",
-    "@langchain/core": "^0.3.66",
+    "@langchain/anthropic": "^0.3.26",
+    "@langchain/community": "^0.3.50",
+    "@langchain/core": "^0.3.67",
     "@langchain/google-genai": "^0.1.12",
     "@langchain/openai": "^0.4.9",
     "commander": "^13.1.0",
