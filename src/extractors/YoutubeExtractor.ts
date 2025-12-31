@@ -74,7 +74,9 @@ ${transcript}
     } catch (error) {
       console.error("Error extracting YouTube content:", error);
       throw new Error(
-        `Error extracting YouTube content: ${error instanceof Error ? error.message : String(error)}`,
+        `Error extracting YouTube content: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
     }
   }

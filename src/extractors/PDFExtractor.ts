@@ -42,7 +42,9 @@ export class PDFExtractor implements TextExtractor {
     } catch (error) {
       console.error("Error extracting PDF text:", error);
       throw new Error(
-        `Error extracting PDF text: ${error instanceof Error ? error.message : String(error)}`,
+        `Error extracting PDF text: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
     }
   }

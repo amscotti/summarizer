@@ -1,122 +1,58 @@
 import { Command, CommanderError } from "commander";
+import { fromStdin, fromURL, summarize } from "./main.ts";
 import {
-  anthropicCall,
-  fromStdin,
-  fromURL,
-  googleCall,
-  openaiCall,
-} from "./main";
-import { DEFAULT_SUMMARY_SIZE } from "./utils/constants";
-import {
-  AnthropicModel,
-  DEFAULT_ANTHROPIC_MODEL_KEY,
-  DEFAULT_GOOGLE_MODEL_KEY,
-  DEFAULT_OPENAI_MODEL_KEY,
-  GoogleModel,
-  OpenAIModel,
+  DEFAULT_SUMMARY_SIZE,
   SummarySize,
-} from "./utils/types";
-import type {
-  AnthropicOptions,
-  GoogleOptions,
-  OpenAIOptions,
-} from "./utils/types";
+  type SummarySizeType,
+} from "./utils/types.ts";
 
-const isPipedInput = process.stdin.isTTY === undefined;
+interface Options {
+  summarySize: SummarySizeType;
+  streaming: boolean;
+}
 
-const validateValue = (values: readonly string[]) => (value: string) => {
-  if (!values.includes(value)) {
+function parseSummarySize(value: string): SummarySizeType {
+  const validSizes = Object.values(SummarySize) as string[];
+  if (!validSizes.includes(value)) {
     throw new CommanderError(
       1,
       "commander.invalidArgument",
-      `Invalid value: ${value}`,
+      `Invalid summary size: ${value}. Valid options: ${validSizes.join(", ")}`,
     );
   }
-  return value;
-};
-
-class MyRootCommand extends Command {
-  createCommand(name: string) {
-    const cmd = new Command(name);
-    cmd
-      .description("Command line tool to summarize articles and other content")
-      .option(
-        "-s, --summary-size <size>",
-        "Desired size for summary",
-        validateValue(Object.values(SummarySize)),
-        DEFAULT_SUMMARY_SIZE,
-      )
-      .option("--no-streaming", "Disable streaming of summary");
-    return cmd;
-  }
+  return value as SummarySizeType;
 }
 
-const program = new MyRootCommand();
+async function getText(url: string | undefined): Promise<string | null> {
+  if (url) {
+    return fromURL(url);
+  }
+  if (process.stdin.isTTY === undefined) {
+    return fromStdin();
+  }
+  return null;
+}
+
+const program = new Command();
 
 program
-  .command("anthropic")
-  .arguments("[url]")
+  .name("summarizer")
+  .description("Summarize articles and other content using AI")
+  .argument("[url]", "URL to summarize (or pipe text via stdin)")
   .option(
-    "-m, --model-name <name>",
-    "The Anthropic model name",
-    validateValue(Object.keys(AnthropicModel)),
-    DEFAULT_ANTHROPIC_MODEL_KEY,
+    "-s, --summary-size <size>",
+    "Summary size: short, medium, long (default: long)",
+    parseSummarySize,
+    DEFAULT_SUMMARY_SIZE,
   )
-  .description("Using Anthropic models")
-  .action(async (url: string | undefined, options: AnthropicOptions) => {
-    if (url) {
-      const text = await fromURL(url);
-      await anthropicCall(options, text);
-    } else if (isPipedInput) {
-      await anthropicCall(options, await fromStdin());
-    } else {
+  .option("--no-streaming", "Disable streaming output")
+  .action(async (url: string | undefined, options: Options) => {
+    const text = await getText(url);
+    if (!text) {
       program.help();
-      process.exit(1);
+      return;
     }
+    await summarize(text, options.summarySize, options.streaming);
   });
 
-program
-  .command("openai")
-  .arguments("[url]")
-  .option(
-    "-m, --model-name <name>",
-    "The OpenAI model name",
-    validateValue(Object.keys(OpenAIModel)),
-    DEFAULT_OPENAI_MODEL_KEY,
-  )
-  .description("Using OpenAI models")
-  .action(async (url: string | undefined, options: OpenAIOptions) => {
-    if (url) {
-      const text = await fromURL(url);
-      await openaiCall(options, text);
-    } else if (isPipedInput) {
-      await openaiCall(options, await fromStdin());
-    } else {
-      program.help();
-      process.exit(1);
-    }
-  });
-
-program
-  .command("google")
-  .arguments("[url]")
-  .option(
-    "-m, --model-name <name>",
-    "The Google model name",
-    validateValue(Object.keys(GoogleModel)),
-    DEFAULT_GOOGLE_MODEL_KEY,
-  )
-  .description("Using Google models")
-  .action(async (url: string | undefined, options: GoogleOptions) => {
-    if (url) {
-      const text = await fromURL(url);
-      await googleCall(options, text);
-    } else if (isPipedInput) {
-      await googleCall(options, await fromStdin());
-    } else {
-      program.help();
-      process.exit(1);
-    }
-  });
-
-program.parse(process.argv);
+program.parse();

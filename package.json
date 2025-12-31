@@ -16,12 +16,12 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.1.17",
+    "@ai-sdk/google": "^1.1.17",
+    "@ai-sdk/openai": "^1.1.17",
+    "@ai-sdk/xai": "^1.1.17",
     "@cyber2024/pdf-parse-fixed": "^1.2.5",
-    "@langchain/anthropic": "^0.3.26",
-    "@langchain/community": "^0.3.50",
-    "@langchain/core": "^0.3.67",
-    "@langchain/google-genai": "^0.1.12",
-    "@langchain/openai": "^0.4.9",
+    "ai": "^4.1.56",
     "commander": "^13.1.0",
     "html-to-text": "^9.0.5",
     "youtube-transcript": "^1.2.1",
